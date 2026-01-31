@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Вайб-калькулятор | Создан с DeepSeek AI</title>
+    <title>Вайб-калькулятор | Обычный & Инженерный</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
@@ -13,6 +13,17 @@
     <div class="container">
         <header>
             <h1><i class="fas fa-calculator"></i> Вайб-калькулятор</h1>
+            
+            <!-- ПЕРЕКЛЮЧАТЕЛЬ РЕЖИМОВ -->
+            <div class="mode-switcher">
+                <span class="mode-label">Обычный</span>
+                <label class="switch">
+                    <input type="checkbox" id="engineering-toggle">
+                    <span class="slider"></span>
+                </label>
+                <span class="mode-label">Инженерный</span>
+            </div>
+            
             <p class="subtitle">Проект в стиле "кодим вместе"</p>
         </header>
 
@@ -24,7 +35,7 @@
                     <div class="current-operand" id="current-operand">0</div>
                 </div>
 
-                <!-- Кнопки калькулятора -->
+                <!-- Обычные кнопки -->
                 <div class="buttons">
                     <button class="btn operation" data-action="clear">C</button>
                     <button class="btn operation" data-action="backspace"><i class="fas fa-backspace"></i></button>
@@ -50,14 +61,35 @@
                     <button class="btn number" data-number=".">.</button>
                     <button class="btn equals" data-action="equals">=</button>
                 </div>
+
+                <!-- ИНЖЕНЕРНЫЕ КНОПКИ (изначально скрыты) -->
+                <div class="engineering-buttons" id="engineering-panel">
+                    <button class="btn eng" data-action="sin">sin</button>
+                    <button class="btn eng" data-action="cos">cos</button>
+                    <button class="btn eng" data-action="tan">tan</button>
+                    <button class="btn eng" data-action="log">log</button>
+                    <button class="btn eng" data-action="ln">ln</button>
+                    
+                    <button class="btn eng" data-action="sqrt">√</button>
+                    <button class="btn eng" data-action="square">x²</button>
+                    <button class="btn eng" data-action="power">xʸ</button>
+                    <button class="btn eng" data-action="pi">π</button>
+                    <button class="btn eng" data-action="e">e</button>
+                    
+                    <button class="btn eng" data-action="plusminus">±</button>
+                    <button class="btn eng" data-action="open-paren">(</button>
+                    <button class="btn eng" data-action="close-paren">)</button>
+                    <button class="btn eng" data-action="factorial">!</button>
+                    <button class="btn eng" data-action="reciprocal">1/x</button>
+                </div>
             </div>
         </main>
 
         <footer>
-            <p>Создано в коллаборации с DeepSeek AI | 2024</p>
+            <p>Создано в коллаборации с DeepSeek AI | 2026</p>
         </footer>
     </div>
 
     <script src="script.js"></script>
 </body>
-</html>
+    </html>
