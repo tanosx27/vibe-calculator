@@ -7,6 +7,7 @@ const equalsButton = document.querySelector('.equals');
 const clearButton = document.querySelector('[data-action="clear"]');
 const backspaceButton = document.querySelector('[data-action="backspace"]');
 const percentageButton = document.querySelector('[data-action="percentage"]');
+const engineeringButtons = document.querySelectorAll('.btn.eng');
 
 // === 2. Переменные для хранения данных ===
 let currentOperand = '0';
@@ -38,7 +39,6 @@ function appendNumber(number) {
         currentOperand = number;
         shouldResetCurrentOperand = false;
     } else {
-        // Проверяем, чтобы точка не добавлялась больше одного раза
         if (number === '.' && currentOperand.includes('.')) return;
         currentOperand += number;
     }
@@ -49,7 +49,6 @@ function appendNumber(number) {
 function chooseOperation(op) {
     if (currentOperand === '') return;
     
-    // Если уже есть предыдущий операнд и операция, вычисляем сначала
     if (previousOperand !== '' && operation && !shouldResetCurrentOperand) {
         calculate();
     }
@@ -90,7 +89,6 @@ function calculate() {
             return;
     }
     
-    // Округляем до 10 знаков после запятой
     currentOperand = Math.round(computation * 10000000000) / 10000000000;
     operation = null;
     previousOperand = '';
@@ -123,14 +121,171 @@ function percentage() {
     updateDisplay();
 }
 
-// === 11. Добавляем обработчики событий для цифровых кнопок ===
+// === 11. ИНЖЕНЕРНЫЕ ФУНКЦИИ ===
+
+// Синус (в радианах)
+function sine() {
+    if (currentOperand === '0') return;
+    currentOperand = Math.sin(parseFloat(currentOperand)).toString();
+    updateDisplay();
+}
+
+// Косинус (в радианах)
+function cosine() {
+    if (currentOperand === '0') return;
+    currentOperand = Math.cos(parseFloat(currentOperand)).toString();
+    updateDisplay();
+}
+
+// Тангенс (в радианах)
+function tangent() {
+    if (currentOperand === '0') return;
+    currentOperand = Math.tan(parseFloat(currentOperand)).toString();
+    updateDisplay();
+}
+
+// Десятичный логарифм
+function logarithm() {
+    if (currentOperand === '0' || parseFloat(currentOperand) <= 0) {
+        alert('Ошибка: логарифм от неположительного числа!');
+        return;
+    }
+    currentOperand = Math.log10(parseFloat(currentOperand)).toString();
+    updateDisplay();
+}
+
+// Натуральный логарифм
+function naturalLog() {
+    if (currentOperand === '0' || parseFloat(currentOperand) <= 0) {
+        alert('Ошибка: логарифм от неположительного числа!');
+        return;
+    }
+    currentOperand = Math.log(parseFloat(currentOperand)).toString();
+    updateDisplay();
+}
+
+// Квадратный корень
+function squareRoot() {
+    if (currentOperand === '0' || parseFloat(currentOperand) < 0) {
+        alert('Ошибка: корень из отрицательного числа!');
+        return;
+    }
+    currentOperand = Math.sqrt(parseFloat(currentOperand)).toString();
+    updateDisplay();
+}
+
+// Квадрат числа
+function square() {
+    if (currentOperand === '0') return;
+    const num = parseFloat(currentOperand);
+    currentOperand = (num * num).toString();
+    updateDisplay();
+}
+
+// Число Пи
+function pi() {
+    currentOperand = Math.PI.toString();
+    updateDisplay();
+}
+
+// Число e
+function euler() {
+    currentOperand = Math.E.toString();
+    updateDisplay();
+}
+
+// Смена знака
+function plusMinus() {
+    if (currentOperand === '0') return;
+    currentOperand = (parseFloat(currentOperand) * -1).toString();
+    updateDisplay();
+}
+
+// Обратное число
+function reciprocal() {
+    if (currentOperand === '0') {
+        alert('Ошибка: деление на ноль!');
+        return;
+    }
+    currentOperand = (1 / parseFloat(currentOperand)).toString();
+    updateDisplay();
+}
+
+// Факториал (упрощённая версия)
+function factorial() {
+    if (currentOperand === '0') {
+        currentOperand = '1';
+        updateDisplay();
+        return;
+    }
+    
+    const num = parseInt(parseFloat(currentOperand));
+    if (num < 0 || num > 100) {
+        alert('Факториал определён для целых чисел от 0 до 100');
+        return;
+    }
+    
+    let result = 1;
+    for (let i = 2; i <= num; i++) {
+        result *= i;
+    }
+    currentOperand = result.toString();
+    updateDisplay();
+}
+
+// === 12. Обработка инженерных кнопок ===
+function handleEngineeringAction(action) {
+    switch(action) {
+        case 'sin': sine(); break;
+        case 'cos': cosine(); break;
+        case 'tan': tangent(); break;
+        case 'log': logarithm(); break;
+        case 'ln': naturalLog(); break;
+        case 'sqrt': squareRoot(); break;
+        case 'square': square(); break;
+        case 'power': 
+            // Для xʸ нужно сохранить текущее число и запросить степень
+            previousOperand = currentOperand;
+            operation = 'power';
+            shouldResetCurrentOperand = true;
+            updateDisplay();
+            break;
+        case 'pi': pi(); break;
+        case 'e': euler(); break;
+        case 'plusminus': plusMinus(); break;
+        case 'open-paren': appendNumber('('); break;
+        case 'close-paren': appendNumber(')'); break;
+        case 'factorial': factorial(); break;
+        case 'reciprocal': reciprocal(); break;
+    }
+}
+
+// === 13. ИНЖЕНЕРНЫЙ ПЕРЕКЛЮЧАТЕЛЬ ===
+const engineeringToggle = document.getElementById('engineering-toggle');
+const calculatorElement = document.querySelector('.calculator');
+
+if (engineeringToggle) {
+    engineeringToggle.addEventListener('change', function() {
+        if (this.checked) {
+            calculatorElement.classList.add('engineering-mode');
+            console.log('🔬 Включён инженерный режим');
+        } else {
+            calculatorElement.classList.remove('engineering-mode');
+            console.log('🧮 Включён обычный режим');
+        }
+    });
+}
+
+// === 14. Добавляем обработчики событий ===
+
+// Цифровые кнопки
 numberButtons.forEach(button => {
     button.addEventListener('click', () => {
         appendNumber(button.getAttribute('data-number'));
     });
 });
 
-// === 12. Добавляем обработчики для операций ===
+// Операции
 operationButtons.forEach(button => {
     button.addEventListener('click', () => {
         const action = button.getAttribute('data-action');
@@ -140,13 +295,21 @@ operationButtons.forEach(button => {
     });
 });
 
-// === 13. Обработчики для специальных кнопок ===
+// Инженерные кнопки
+engineeringButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const action = button.getAttribute('data-action');
+        handleEngineeringAction(action);
+    });
+});
+
+// Специальные кнопки
 clearButton.addEventListener('click', clear);
 backspaceButton.addEventListener('click', backspace);
 percentageButton.addEventListener('click', percentage);
 equalsButton.addEventListener('click', calculate);
 
-// === 14. Обработка клавиатуры ===
+// === 15. Обработка клавиатуры ===
 document.addEventListener('keydown', event => {
     const key = event.key;
     
@@ -160,7 +323,7 @@ document.addEventListener('keydown', event => {
     if (key === '-') chooseOperation('subtract');
     if (key === '*') chooseOperation('multiply');
     if (key === '/') {
-        event.preventDefault(); // Блокируем стандартное поведение
+        event.preventDefault();
         chooseOperation('divide');
     }
     
@@ -169,43 +332,27 @@ document.addEventListener('keydown', event => {
     if (key === 'Escape') clear();
     if (key === 'Backspace') backspace();
     if (key === '%') percentage();
+    
+    // Инженерные функции (частичная поддержка)
+    if (key === 's' || key === 'S') sine();
+    if (key === 'c' || key === 'C') cosine();
+    if (key === 't' || key === 'T') tangent();
+    if (key === 'q' || key === 'Q') squareRoot();
 });
 
-// === 15. Инициализация (первый запуск) ===
+// === 16. Инициализация ===
 updateDisplay();
-
-// === 16. Переключатель темы ===
-const themeToggle = document.getElementById('theme-toggle');
-const body = document.body;
-
-// Проверяем сохранённую тему в localStorage
-if (localStorage.getItem('theme') === 'light') {
-    body.classList.add('light-theme');
-    themeToggle.checked = true;
-}
-
-// Обработчик переключения
-themeToggle.addEventListener('change', function() {
-    if (this.checked) {
-        body.classList.add('light-theme');
-        localStorage.setItem('theme', 'light');
-        console.log('🌞 Переключено на светлую тему!');
-    } else {
-        body.classList.remove('light-theme');
-        localStorage.setItem('theme', 'dark');
-        console.log('🌙 Переключено на тёмную тему!');
-    }
-});
 
 // === 17. Консоль-приветствие ===
 console.log(`
-╔══════════════════════════════════════╗
-║   🎮 Калькулятор полностью готов!    ║
-║   🌓 Теперь с переключателем темы!   ║
-║   Баг с операциями исправлен ✓       ║
-║   Сохранение темы в браузере ✓       ║
-║                                       ║
-║   Попробуйте: 123 + 456 =            ║
-║   И переключите тему! →              ║
-╚══════════════════════════════════════╝
+╔══════════════════════════════════════════════╗
+║       🎮 ИНЖЕНЕРНЫЙ КАЛЬКУЛЯТОР АКТИВИРОВАН! ║
+║   🌓 Режимы: Обычный ↔ Инженерный            ║
+║   🧮 Основные операции: +, -, ×, ÷           ║
+║   🔬 Инженерные: sin, cos, tan, log, √, x²  ║
+║   📅 Версия: 2026                            ║
+║                                              ║
+║   Попробуйте: Включите инженерный режим →    ║
+║   π × 2 = или sin(0.5) =                     ║
+╚══════════════════════════════════════════════╝
 `);
